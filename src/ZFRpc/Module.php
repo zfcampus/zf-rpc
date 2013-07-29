@@ -5,12 +5,12 @@ namespace ZFRpc;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
-class Module implements AutoloaderProviderInterface , ConfigProviderInterface, ServiceProviderInterface
+class Module implements 
+    AutoloaderProviderInterface,
+    ServiceProviderInterface
 {
-
     public function getAutoloaderConfig()
     {
         return array(
@@ -20,11 +20,6 @@ class Module implements AutoloaderProviderInterface , ConfigProviderInterface, S
                 ),
             ),
         );
-    }
-
-    public function getConfig()
-    {
-        return include __DIR__ . '/../../config/module.config.php';
     }
 
     /**
@@ -37,7 +32,6 @@ class Module implements AutoloaderProviderInterface , ConfigProviderInterface, S
         return array(
             'factories' => array(
                 'ZFRpc' => function ($sm) {
-                    /* @var $sm \Zend\ServiceManager\ServiceManager */
                     return new ZFRpc($sm->get('Application'));
                 }
             )
@@ -62,5 +56,4 @@ class Module implements AutoloaderProviderInterface , ConfigProviderInterface, S
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
     }
-
 }
