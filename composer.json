@@ -1,0 +1,12 @@
+{
+    "name": "zfcampus/zfrpc",
+    "authors": [
+        {
+            "name": "Ralph Schindler",
+            "email": "ralph@ralphschindler.com"
+        }
+    ],
+    "require": {
+
+    }
+}
