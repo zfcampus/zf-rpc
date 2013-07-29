@@ -13,8 +13,7 @@ class ConfigurationListener
 
         $config = $app->getServiceManager()->get('configuration');
 
-        /** @var ZFRpc $zfRpc */
-        $zfRpc = $sm->get('ZFRpc');
+        $zfRpc = $sm->get('ZF\Rpc');
 
         if (isset($config['zf-rpc']) && is_array($config['zf-rpc'])) {
             foreach ($config['zf-rpc'] as $rpcConfig) {
