@@ -1,6 +1,6 @@
 <?php
 
-namespace ZFRpc;
+namespace ZF\Rpc;
 
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

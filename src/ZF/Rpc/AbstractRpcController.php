@@ -1,6 +1,6 @@
 <?php
 
-namespace ZFRpc\Controller;
+namespace ZF\Rpc;
 
 use Zend\Mvc\Controller\AbstractActionController as BaseAbstractActionController;
 use Zend\Mvc\MvcEvent;
@@ -56,5 +56,4 @@ abstract class AbstractRpcController extends BaseAbstractActionController
 
         return $result;
     }
-
 }

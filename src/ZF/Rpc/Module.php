@@ -1,6 +1,6 @@
 <?php
 
-namespace ZFRpc;
+namespace ZF\Rpc;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\ModuleRouteListener;
@@ -27,8 +27,8 @@ class Module
     {
         return array(
             'factories' => array(
-                'ZFRpc' => function ($sm) {
-                    return new ZFRpc($sm->get('Application'));
+                'ZF\Rpc' => function ($sm) {
+                    return new Rpc($sm->get('Application'));
                 }
             )
         );

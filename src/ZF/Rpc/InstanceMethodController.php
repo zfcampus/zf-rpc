@@ -1,6 +1,6 @@
 <?php
 
-namespace ZFRpc\Controller;
+namespace ZF\Rpc;
 
 use Zend\Mvc\MvcEvent;
 

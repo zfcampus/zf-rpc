@@ -1,12 +1,12 @@
 <?php
-namespace ZFRpc;
+namespace ZF\Rpc;
 
 use Zend\Mvc\Application;
 use Zend\Mvc\Router;
 use Zend\Config\Reader\Xml as XmlConfig;
 use Zend\Stdlib\ArrayUtils;
 
-class ZFRpc
+class Rpc
 {
     /**
      * @var Application
