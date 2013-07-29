@@ -1,12 +1,10 @@
 <?php
 
-namespace ZFRpc\Controller;
+namespace ZFRpc;
 
-//use Zend\Mvc\Controller\ControllerManager as MvcControllerManager;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stdlib\DispatchableInterface;
-
 
 class ControllerAbstractFactory implements AbstractFactoryInterface
 {
