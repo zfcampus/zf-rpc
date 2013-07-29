@@ -34,10 +34,9 @@ class ZFRpc
     {
         $this->application = $application;
         $sm = $this->application->getServiceManager();
-        /* @var $router \Zend\Mvc\Router\Http\TreeRouteStack */
         $this->router = $sm->get('Router');
 
-        $this->controllerAbstractFactory = new Controller\ControllerAbstractFactory();
+        $this->controllerAbstractFactory = new ControllerAbstractFactory();
 
         $this->controllerManager = $sm->get('ControllerLoader');
         $this->controllerManager->addAbstractFactory($this->controllerAbstractFactory);
@@ -101,7 +100,7 @@ class ZFRpc
             $this->controllerAbstractFactory->addController($controller);
         } elseif (is_callable($dispatchable)) {
             $parameters['controller'] = 'controller-' . $routeCount;
-            $controller = new Controller\CallableController($dispatchable);
+            $controller = new CallableController($dispatchable);
             $this->controllerManager->setService('controller-' . $routeCount, $controller);
         }
 

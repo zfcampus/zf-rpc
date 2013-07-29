@@ -4,12 +4,8 @@ namespace ZFRpc;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\ModuleRouteListener;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
-use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
-class Module implements 
-    AutoloaderProviderInterface,
-    ServiceProviderInterface
+class Module
 {
     public function getAutoloaderConfig()
     {
