@@ -20,13 +20,12 @@ abstract class AbstractRpcController extends BaseAbstractActionController
             $method = 'notFoundAction';
         }
 
-        /** @var $parameterData \ZFContentNegotiation\ParameterDataContainer */
+        /** @var $parameterData \ZF\ContentNegotiation\ParameterDataContainer */
         $parameterData = $this->getEvent()->getParam('ZFContentNegotiationParameterData');
         if ($parameterData) {
             $parameters = $parameterData->getRouteParams();
         } else {
             $parameters = $routeMatch->getParams();
-            unset($parameters['_gateway']);
         }
 
         // match parameter

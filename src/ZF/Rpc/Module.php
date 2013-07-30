@@ -43,6 +43,12 @@ class Module
     {
         $app = $e->getApplication();
         $em = $app->getEventManager();
+        $sm = $e->getApplication()->getServiceManager();
+
+        // setup json strategy (@todo This needs to be globalized)
+        $strategy = $sm->get('ViewJsonStrategy');
+        $view = $sm->get('ViewManager')->getView();
+        $strategy->attach($view->getEventManager());
 
         // setup pre-route configuration
         $em->attach(MvcEvent::EVENT_ROUTE, new ConfigurationListener(), 100);

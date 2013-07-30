@@ -3,6 +3,7 @@
 namespace ZF\Rpc;
 
 use Zend\Mvc\MvcEvent;
+use Zend\View\Model;
 
 class InstanceMethodController extends AbstractRpcController
 {
@@ -30,7 +31,7 @@ class InstanceMethodController extends AbstractRpcController
             $method = 'notFoundAction';
         }
 
-        /** @var $parameterData \ZFContentNegotiation\ParameterDataContainer */
+        /** @var $parameterData \ZF\ContentNegotiation\ParameterDataContainer */
         $parameterData = $this->getEvent()->getParam('ZFContentNegotiationParameterData');
         if ($parameterData) {
             $parameters = $parameterData->getRouteParams();
@@ -44,12 +45,28 @@ class InstanceMethodController extends AbstractRpcController
         $dispatchParameters = $parameterMatcher->getMatchedParameters(array($this->instance, $method), $parameters);
 
         // call action
-        $actionResponse = call_user_func_array(array($this->instance, $method), $dispatchParameters);
+        $result = call_user_func_array(array($this->instance, $method), $dispatchParameters);
 
-        // return response as MvcEvent response
-        $e->setResult($actionResponse);
+        if (!$result instanceof Model\ModelInterface) {
+            if ($result instanceof \JsonSerializable) {
+                $result = $result->jsonSerialize();
+            }
+            if (is_object($result)) {
+                if (method_exists($result, 'toArray')) {
+                    $result = $result->toArray();
+                } else {
+                    throw new \Exception('Responses must be an array or an object that implements JsonSerializable or has a method called toArray()');
+                }
+            }
+            if ($result === null) {
+                $result = array();
+            }
+            $result = new Model\JsonModel($result);
+            $result->setTerminal(true);
+        }
 
-        return $actionResponse;
+        $e->setResult($result);
+        return $result;
     }
 
     /**

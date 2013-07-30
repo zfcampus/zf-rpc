@@ -61,9 +61,11 @@ class Rpc
                         $this->route($url, $dispatchable, $methods /*, $validate, $response, $authenticate*/);
                     }
                     break;
+                /*
                 case 'response':
                     $this->config['response'] = $this->normalizeResponseOptions($value);
                     break;
+                */
             }
         }
 
