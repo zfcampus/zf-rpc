@@ -2,9 +2,6 @@
 
 namespace ZF\Rpc;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\ModuleRouteListener;
-
 class Module
 {
     public function getAutoloaderConfig()
@@ -19,43 +16,22 @@ class Module
     }
 
     /**
-     * Setup the service configuration
+     * Retrieve module configuration
      *
-     * @see \Zend\ModuleManager\Feature\ServiceProviderInterface::getServiceConfig()
+     * @return array
      */
-    public function getServiceConfig()
+    public function getConfig()
     {
-        return array(
-            'factories' => array(
-                'ZF\Rpc' => function ($sm) {
-                    return new Rpc($sm->get('Application'));
-                }
-            )
-        );
+        return include __DIR__ . '/../../../config/module.config.php';
     }
 
-    /**
-     * Bootstrap time
-     *
-     * @param MvcEvent $e
-     */
     public function onBootstrap($e)
     {
-        $app = $e->getApplication();
-        $em = $app->getEventManager();
         $sm = $e->getApplication()->getServiceManager();
 
         // setup json strategy (@todo This needs to be globalized)
         $strategy = $sm->get('ViewJsonStrategy');
         $view = $sm->get('ViewManager')->getView();
         $strategy->attach($view->getEventManager());
-
-        // setup pre-route configuration
-        $em->attach(MvcEvent::EVENT_ROUTE, new ConfigurationListener(), 100);
-
-        // setup Module Route Listeners
-        $eventManager        = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
     }
 }
