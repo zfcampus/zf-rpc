@@ -19,7 +19,6 @@ class RpcControllerFactory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $controllerManager, $name, $requestedName)
     {
-        /** @var \Zend\Mvc\Controller\ControllerManager $controllerManager */
         $serviceLocator = $controllerManager->getServiceLocator();
 
         if (!$serviceLocator->has('Config')) {
@@ -34,7 +33,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
         $config = $config['zf-rpc'];
 
         // must have some kind of callable
-        if (!isset($config[$requestedName]) || !isset($config[$requestedName]['callable'])) {
+        if (!isset($config[$requestedName])) {
             return false;
         }
 
@@ -51,13 +50,12 @@ class RpcControllerFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $controllerManager, $name, $requestedName)
     {
-        /** @var \Zend\Mvc\Controller\ControllerManager $controllerManager */
         $serviceLocator = $controllerManager->getServiceLocator();
 
         $config = $serviceLocator->get('Config');
         $config = $config['zf-rpc'];
 
-        $callable = $config[$requestedName]['callable'];
+        $callable = $config[$requestedName];
 
         if (is_string($callable)) {
             $controller = new RpcController();
