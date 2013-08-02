@@ -49,32 +49,10 @@ class RpcController extends BaseAbstractActionController
 
         $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters);
         $result = call_user_func_array($callable, $dispatchParameters);
-        $result = $this->transformResult($result);
-        $e->setResult($result);
-    }
 
-    protected function transformResult($result)
-    {
-        if ($result instanceof Model\ModelInterface) {
-            return $result;
-        }
-        if ($result instanceof \JsonSerializable) {
-            $result = $result->jsonSerialize();
-        }
-        if (is_object($result)) {
-            if (method_exists($result, 'toArray')) {
-                $result = $result->toArray();
-            } else {
-                throw new \Exception('Responses must be an array or an object that implements JsonSerializable or has a method called toArray()');
-            }
-        }
-        if ($result === null) {
-            $result = array();
-        }
-        $result = new Model\JsonModel($result);
-        $result->setTerminal(true);
+	$e->setParam('ZFContentNegotiationFallback', array('Zend\View\Model\JsonModel' => array('application/json')));
 
-        return $result;
+	$e->setResult($result);
     }
 
     /**

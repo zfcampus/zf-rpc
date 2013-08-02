@@ -7,7 +7,7 @@
         }
     ],
     "require": {
-
+	"zfcampus/zf-content-negotiation": "latest"
     },
     "autoload": {
         "psr-0": {
