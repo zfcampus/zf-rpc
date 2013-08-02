@@ -6,8 +6,12 @@
             "email": "ralph@ralphschindler.com"
         }
     ],
+    "repositories": [
+        { "type": "vcs", "url": "git@bitbucket.org:zendframework/zfcontentnegotiation.git" }
+    ],
+    "minimum-stability": "dev",
     "require": {
-	"zfcampus/zf-content-negotiation": "latest"
+        "zfcampus/zf-content-negotiation": "dev-master"
     },
     "autoload": {
         "psr-0": {
