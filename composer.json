@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "zfcampus/zf-content-negotiation": "dev-master",
-        "zendframework/zendframework": ">=2.3.0dev"
+        "zendframework/zendframework": "dev-master"
     },
     "autoload": {
         "psr-0": {
