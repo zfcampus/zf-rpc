@@ -20,7 +20,6 @@ class RpcController extends BaseAbstractActionController
     {
         $routeMatch = $e->getRouteMatch();
 
-        /** @var $parameterData \ZF\ContentNegotiation\ParameterDataContainer */
         $contentNegotiationParams = $e->getParam('ZFContentNegotiationParameterData');
         if ($contentNegotiationParams) {
             $routeParameters = $contentNegotiationParams->getRouteParams();
@@ -50,9 +49,8 @@ class RpcController extends BaseAbstractActionController
         $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters);
         $result = call_user_func_array($callable, $dispatchParameters);
 
-	$e->setParam('ZFContentNegotiationFallback', array('Zend\View\Model\JsonModel' => array('application/json')));
-
-	$e->setResult($result);
+        $e->setParam('ZFContentNegotiationFallback', array('Zend\View\Model\JsonModel' => array('application/json')));
+        $e->setResult($result);
     }
 
     /**
