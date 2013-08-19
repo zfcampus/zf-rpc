@@ -1,6 +1,6 @@
 <?php
 return array(
-    'zf-rest' => array(
+    'zf-rpc' => array(
         // Array of Controller service name / callable pairs
         //
         // Example:
