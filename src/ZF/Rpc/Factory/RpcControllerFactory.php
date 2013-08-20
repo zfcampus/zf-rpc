@@ -19,7 +19,6 @@ class RpcControllerFactory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $controllerManager, $name, $requestedName)
     {
-        /** @var \Zend\Mvc\Controller\ControllerManager $controllerManager */
         $serviceLocator = $controllerManager->getServiceLocator();
 
         if (!$serviceLocator->has('Config')) {
@@ -27,7 +26,9 @@ class RpcControllerFactory implements AbstractFactoryInterface
         }
 
         $config = $serviceLocator->get('Config');
-	if (!isset($config['zf-rpc']) || !isset($config['zf-rpc'][$requestedName])) {
+        if (!isset($config['zf-rpc']) 
+            || !isset($config['zf-rpc'][$requestedName])
+        ) {
             return false;
         }
 
@@ -43,28 +44,24 @@ class RpcControllerFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $controllerManager, $name, $requestedName)
     {
-        /** @var \Zend\Mvc\Controller\ControllerManager $controllerManager */
         $serviceLocator = $controllerManager->getServiceLocator();
+        $config         = $serviceLocator->get('Config');
+        $callable       = $config['zf-rpc'][$requestedName];
 
-        $config = $serviceLocator->get('Config');
-	$callable = $config['zf-rpc'][$requestedName];
-
-        if (is_string($callable)) {
-            $controller = new RpcController();
-            if (strpos($callable, '::') !== false) {
-                $wrappedCallable = explode('::', $callable, 2);
-                $wrappedCallable[0] = new $wrappedCallable[0];
-            } else {
-                $wrappedCallable = $callable;
-            }
-            $controller->setWrappedCallable($wrappedCallable);
-        } elseif (is_callable($callable)) {
-            $controller = new RpcController();
-            $controller->setWrappedCallable($callable);
-        } else {
+        if (!is_string($callable) && !is_callable($callable)) {
             throw new \Exception('Unable to create a controller from the configured zf-rpc callable');
         }
 
+        if (is_string($callable)
+            && strpos($callable, '::') !== false
+        ) {
+            $wrappedCallable    = explode('::', $callable, 2);
+            $wrappedCallable[0] = new $wrappedCallable[0];
+            $callable           = $wrappedCallable;
+        }
+
+        $controller = new RpcController();
+        $controller->setWrappedCallable($callable);
         return $controller;
     }
 }
