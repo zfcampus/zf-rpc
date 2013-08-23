@@ -32,6 +32,14 @@ class RpcControllerFactory implements AbstractFactoryInterface
             return false;
         }
 
+        $config = $config['zf-rpc'][$requestedName];
+
+        if (!is_array($config)
+            || !isset($config['callable'])
+        ) {
+            return false;
+        }
+
         return true;
     }
 
@@ -46,7 +54,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
     {
         $serviceLocator = $controllerManager->getServiceLocator();
         $config         = $serviceLocator->get('Config');
-        $callable       = $config['zf-rpc'][$requestedName];
+        $callable       = $config['zf-rpc'][$requestedName]['callable'];
 
         if (!is_string($callable) && !is_callable($callable)) {
             throw new \Exception('Unable to create a controller from the configured zf-rpc callable');
