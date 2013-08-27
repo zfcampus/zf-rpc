@@ -102,7 +102,9 @@ class OptionsListener extends AbstractListenerAggregate
             $options = (array) $options;
         }
 
-        array_walk($options, 'strtoupper');
+        array_walk($options, function (&$value) {
+            return strtoupper($value);
+        });
         return $options;
     }
 
