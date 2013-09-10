@@ -15,7 +15,7 @@ return array(
         // Example:
         //
         //   'Api\LoginController' => array(
-        //       'http_options' => array('POST'),
+        //       'http_methods' => array('POST'),
         //       'route_name'   => 'api-login',
         //       'callable'     => 'Api\Controller\Login::process',
         //   ),

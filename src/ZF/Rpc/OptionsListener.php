@@ -56,10 +56,10 @@ class OptionsListener extends AbstractListenerAggregate
 
         $config = $this->config[$controller];
 
-        if (!array_key_exists('http_options', $config)
-            || empty($config['http_options'])
+        if (!array_key_exists('http_methods', $config)
+            || empty($config['http_methods'])
         ) {
-            // No HTTP options set for controller, nothing to do
+            // No HTTP methods set for controller, nothing to do
             return;
         }
 
@@ -69,7 +69,7 @@ class OptionsListener extends AbstractListenerAggregate
             return;
         }
 
-        $options = $this->normalizeOptions($config['http_options']);
+        $options = $this->normalizeMethods($config['http_methods']);
 
         $method = $request->getMethod();
         if ($method === Request::METHOD_OPTIONS) {
@@ -87,25 +87,25 @@ class OptionsListener extends AbstractListenerAggregate
     }
 
     /**
-     * Normalize an options array
+     * Normalize an array of HTTP methods
      *
      * If a string is provided, create an array with that string.
      *
      * Ensure all options in the array are UPPERCASE.
      * 
-     * @param  string|array $options 
+     * @param  string|array $methods 
      * @return array
      */
-    protected function normalizeOptions($options)
+    protected function normalizeMethods($methods)
     {
-        if (is_string($options)) {
-            $options = (array) $options;
+        if (is_string($methods)) {
+            $methods = (array) $methods;
         }
 
-        array_walk($options, function (&$value) {
+        array_walk($methods, function (&$value) {
             return strtoupper($value);
         });
-        return $options;
+        return $methods;
     }
 
     /**
