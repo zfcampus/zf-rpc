@@ -69,21 +69,21 @@ class OptionsListener extends AbstractListenerAggregate
             return;
         }
 
-        $options = $this->normalizeMethods($config['http_methods']);
+        $methods = $this->normalizeMethods($config['http_methods']);
 
         $method = $request->getMethod();
         if ($method === Request::METHOD_OPTIONS) {
             // OPTIONS request? return response with Allow header
-            return $this->getOptionsResponse($event, $options);
+            return $this->getOptionsResponse($event, $methods);
         }
 
-        if (in_array($method, $options)) {
+        if (in_array($method, $methods)) {
             // Valid HTTP method; nothing to do
             return;
         }
 
         // Invalid method; return 405 response
-        return $this->get405Response($event, $options);
+        return $this->get405Response($event, $methods);
     }
 
     /**
