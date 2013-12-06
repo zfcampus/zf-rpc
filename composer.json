@@ -25,6 +25,7 @@
         }
     },
     "require": {
+        "php": ">=5.4.8",
         "zfcampus/zf-api-problem": "~1.0-dev",
         "zfcampus/zf-content-negotiation": "~1.0-dev",
         "zendframework/zendframework": "~2.3-dev"
