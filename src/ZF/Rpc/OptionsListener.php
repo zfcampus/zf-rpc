@@ -20,7 +20,7 @@ class OptionsListener extends AbstractListenerAggregate
     protected $config;
 
     /**
-     * @param  array $config 
+     * @param  array $config
      */
     public function __construct(array $config)
     {
@@ -28,7 +28,7 @@ class OptionsListener extends AbstractListenerAggregate
     }
 
     /**
-     * @param  EventManagerInterface $events 
+     * @param  EventManagerInterface $events
      */
     public function attach(EventManagerInterface $events)
     {
@@ -36,7 +36,7 @@ class OptionsListener extends AbstractListenerAggregate
     }
 
     /**
-     * @param  MvcEvent $event 
+     * @param  MvcEvent $event
      * @return void|\Zend\Http\Response
      */
     public function onRoute(MvcEvent $event)
@@ -96,8 +96,8 @@ class OptionsListener extends AbstractListenerAggregate
      * If a string is provided, create an array with that string.
      *
      * Ensure all options in the array are UPPERCASE.
-     * 
-     * @param  string|array $methods 
+     *
+     * @param  string|array $methods
      * @return array
      */
     protected function normalizeMethods($methods)
@@ -114,9 +114,9 @@ class OptionsListener extends AbstractListenerAggregate
 
     /**
      * Create the Allow header
-     * 
-     * @param  array $options 
-     * @param  Response $response 
+     *
+     * @param  array $options
+     * @param  Response $response
      */
     protected function createAllowHeader(array $options, Response $response)
     {
@@ -128,9 +128,9 @@ class OptionsListener extends AbstractListenerAggregate
      * Prepare and return an OPTIONS response
      *
      * Creates an empty response with an Allow header.
-     * 
-     * @param  MvcEvent $event 
-     * @param  array $options 
+     *
+     * @param  MvcEvent $event
+     * @param  array $options
      * @return Response
      */
     protected function getOptionsResponse(MvcEvent $event, array $options)
@@ -142,9 +142,9 @@ class OptionsListener extends AbstractListenerAggregate
 
     /**
      * Prepare a 405 response
-     * 
-     * @param  MvcEvent $event 
-     * @param  array $options 
+     *
+     * @param  MvcEvent $event
+     * @param  array $options
      * @return Response
      */
     protected function get405Response(MvcEvent $event, array $options)
