@@ -14,7 +14,7 @@ return array(
         //
         // Configuration may include:
         // - callable: the PHP callable to invoke; only necessary if not
-        //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or 
+        //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or
         //   Zend\Mvc\Controller implementation.
         //
         // Example:

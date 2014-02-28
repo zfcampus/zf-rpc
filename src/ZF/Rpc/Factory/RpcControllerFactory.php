@@ -30,7 +30,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
         }
 
         $config = $serviceLocator->get('Config');
-        if (!isset($config['zf-rpc']) 
+        if (!isset($config['zf-rpc'])
             || !isset($config['zf-rpc'][$requestedName])
         ) {
             return false;
