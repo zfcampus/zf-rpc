@@ -1,7 +1,7 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZF\Rpc\Factory;
@@ -30,7 +30,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
         }
 
         $config = $serviceLocator->get('Config');
-        if (!isset($config['zf-rpc']) 
+        if (!isset($config['zf-rpc'])
             || !isset($config['zf-rpc'][$requestedName])
         ) {
             return false;

@@ -1,7 +1,7 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 return array(
@@ -14,7 +14,7 @@ return array(
         //
         // Configuration may include:
         // - callable: the PHP callable to invoke; only necessary if not
-        //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or 
+        //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or
         //   Zend\Mvc\Controller implementation.
         //
         // Example:
