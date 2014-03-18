@@ -30,8 +30,11 @@
         "zfcampus/zf-content-negotiation": "~1.0-dev",
         "zendframework/zendframework": "~2.3"
     },
+    "require-dev": {
+        "fabpot/php-cs-fixer": "*@dev"
+    },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "ZF\\Rpc\\": "src/"
         },
         "classmap": [
