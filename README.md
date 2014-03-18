@@ -1,6 +1,8 @@
 RPC
 ===
 
+[![Build Status](https://travis-ci.org/zfcampus/zf-rpc.png)](https://travis-ci.org/zfcampus/zf-rpc)
+
 Module for implementing RPC web services in ZF2.
 
 Enables:
