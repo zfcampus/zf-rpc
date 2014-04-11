@@ -55,30 +55,41 @@ Configuration
 
 ### User Configuration
 
+This module uses the top-level configuration key of `zf-rpc`.
+
+#### Key: Controller Service Name
+
+The `zf-rpc` module uses a mapping between controller service names with the values being an
+array of information that determine how the RPC style controller is to be dispatched.  The key
+should be a controller name that also matches a controller name from a route in the `router`
+configuration.
+
+Inside this key, the following sub-keys are required:
+
+- `http_methods`: for configuring what methods this RPC service controller can respond to. This
+  also is used for populating the `Allow` response header for this service.
+- `route_name`: for linking back to a particular router.  This is especially useful when RPC
+  routes need to build links as part of their response.
+- `callable` (optional): utilized to specify a callable that will be invoked at dispatch time.
+  At dispatch time, these callables are typically wrapped in an instance of
+  `ZF\Rpc\RpcController`, which is a dispatchable action controller.
+
+Example:
+
 ```php
 'zf-rpc' => array(
-    // Array of Controller service name / configuration
-    //
-    // Configuration should include:
-    // - http_methods: allowed HTTP methods
-    // - route_name: name of route that will match this endpoint
-    //
-    // Configuration may include:
-    // - callable: the PHP callable to invoke; only necessary if not
-    //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or
-    //   Zend\Mvc\Controller implementation.
-    //
-    // Example:
-    //
-    //   'Api\LoginController' => array(
-    //       'http_methods' => array('POST'),
-    //       'route_name'   => 'api-login',
-    //       'callable'     => 'Api\Controller\Login::process',
-    //   ),
+    'Application\Controller\LoginController' => array(
+        'http_methods' => array('POST'),
+        'route_name'   => 'api-login',
+        'callable'     => 'Application\Controller\LoginController::process',
+    ),
 ),
 ```
 
 ### System Configuration
+
+The following configuration ensures this module operates properly in the context of a ZF2
+application:
 
 ```php
 'controllers' => array(
@@ -95,6 +106,11 @@ ZF2 Events
 
 #### `ZF\Rpc\OptionsListener`
 
+This listeners is registered to the `MvcEvent::EVENT_ROUTE` with a priority of -100.  It is
+primarily responsible for ensuring the HTTP response to this RPC request includes the properly
+configured and allowed HTTP methods in the `Allow` header.  This uses the configuration from
+the `http_methods` key of the `zf-rpc` service configuration for the matching service.
+
 ZF2 Services
 ============
 
@@ -102,6 +118,11 @@ ZF2 Services
 
 #### `ZF\Rpc\ParameterMatcher`
 
+This particular model is used and is useful for taking a callable, and a set of named parameters
+and determining which ones can be used as arguments to the callable.
+
 ### Controller
 
 #### `ZF\Rpc\RpcController`
+
+This controller is used to wrap the RPC service instance to make it a ZF2 dispatchable.
