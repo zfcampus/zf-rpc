@@ -8,7 +8,6 @@ namespace ZF\Rpc\Factory;
 
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\DispatchableInterface;
 use ZF\Rpc\RpcController;
 
 class RpcControllerFactory implements AbstractFactoryInterface
