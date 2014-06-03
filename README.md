@@ -14,6 +14,11 @@ Enables:
 - creating a whitelist of HTTP request methods; requests outside the whitelist will return a `405
   Method Not Allowed` response with an `Allow` header indicating allowed methods.
 
+Requirements
+------------
+  
+Please see the [composer.json](composer.json) file.
+
 Installation
 ------------
 
