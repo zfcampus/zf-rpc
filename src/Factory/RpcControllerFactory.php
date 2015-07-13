@@ -1,11 +1,12 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZF\Rpc\Factory;
 
+use InvalidArgumentException;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\RpcController;
@@ -24,21 +25,21 @@ class RpcControllerFactory implements AbstractFactoryInterface
     {
         $serviceLocator = $controllerManager->getServiceLocator();
 
-        if (!$serviceLocator->has('Config')) {
+        if (! $serviceLocator->has('Config')) {
             return false;
         }
 
         $config = $serviceLocator->get('Config');
-        if (!isset($config['zf-rpc'])
-            || !isset($config['zf-rpc'][$requestedName])
+        if (! isset($config['zf-rpc'])
+            || ! isset($config['zf-rpc'][$requestedName])
         ) {
             return false;
         }
 
         $config = $config['zf-rpc'][$requestedName];
 
-        if (!is_array($config)
-            || !isset($config['callable'])
+        if (! is_array($config)
+            || ! isset($config['callable'])
         ) {
             return false;
         }
@@ -59,20 +60,49 @@ class RpcControllerFactory implements AbstractFactoryInterface
         $config         = $serviceLocator->get('Config');
         $callable       = $config['zf-rpc'][$requestedName]['callable'];
 
-        if (!is_string($callable) && !is_callable($callable)) {
-            throw new \Exception('Unable to create a controller from the configured zf-rpc callable');
+        if (! is_string($callable) && ! is_callable($callable)) {
+            throw new InvalidArgumentException('Unable to create a controller from the configured zf-rpc callable');
         }
 
         if (is_string($callable)
             && strpos($callable, '::') !== false
         ) {
-            $wrappedCallable    = explode('::', $callable, 2);
-            $wrappedCallable[0] = new $wrappedCallable[0];
-            $callable           = $wrappedCallable;
+            $callable = $this->marshalCallable($callable, $controllerManager, $serviceLocator);
         }
 
         $controller = new RpcController();
         $controller->setWrappedCallable($callable);
         return $controller;
+    }
+
+    /**
+     * Marshal an instance method callback from a given string.
+     *
+     * @param mixed $string String of the form class::method
+     * @param ServiceLocatorInterface $controllers
+     * @param ServiceLocatorInterface $services
+     * @return callable
+     */
+    private function marshalCallable($string, ServiceLocatorInterface $controllers, ServiceLocatorInterface $services)
+    {
+        list($class, $method) = explode('::', $string, 2);
+
+        if ($controllers->has($class)) {
+            return array($controllers->get($class), $method);
+        }
+
+        if ($services->has($class)) {
+            return array($services->get($class), $method);
+        }
+
+        if (! class_exists($class)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot create callback %s as class %s does not exist',
+                $string,
+                $class
+            ));
+        }
+
+        return array(new $class(), $method);
     }
 }
