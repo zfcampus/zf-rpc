@@ -41,7 +41,9 @@ class RpcController extends BaseAbstractActionController
         } elseif (is_object($this->wrappedCallable) || is_null($this->wrappedCallable)) {
             $action = $routeMatch->getParam('action', 'not-found');
             $method = static::getMethodFromAction($action);
-            $callable = (is_null($this->wrappedCallable) && get_class($this) != __CLASS__) ? $this : $this->wrappedCallable;
+            $callable = (is_null($this->wrappedCallable) && get_class($this) != __CLASS__)
+                ? $this
+                : $this->wrappedCallable;
             if (!method_exists($callable, $method)) {
                 $method = 'notFoundAction';
             }

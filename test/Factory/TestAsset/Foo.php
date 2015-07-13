@@ -14,6 +14,6 @@ class Foo
 
     public static function baz()
     {
-        
+
     }
 }
