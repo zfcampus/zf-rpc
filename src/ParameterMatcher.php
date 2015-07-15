@@ -31,17 +31,17 @@ class ParameterMatcher
             throw new \Exception('Unknown callable');
         }
 
-        $dispatchParams = array();
+        $dispatchParams = [];
 
         // normalize names to that they can match potential php variables
-        $normalParams = array();
+        $normalParams = [];
         foreach ($parameters as $pn => $pv) {
-            $normalParams[str_replace(array('-', '_'), '', strtolower($pn))] = $pv;
+            $normalParams[str_replace(['-', '_'], '', strtolower($pn))] = $pv;
         }
 
         foreach ($reflMethodParams as $reflMethodParam) {
             $paramName = $reflMethodParam->getName();
-            $normalMethodParamName = str_replace(array('-', '_'), '', strtolower($paramName));
+            $normalMethodParamName = str_replace(['-', '_'], '', strtolower($paramName));
             if ($reflectionTypehint = $reflMethodParam->getClass()) {
                 $typehint = $reflectionTypehint->getName();
                 if ($typehint == 'Zend\Http\PhpEnvironment\Request'
