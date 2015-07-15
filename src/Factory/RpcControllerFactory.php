@@ -88,11 +88,11 @@ class RpcControllerFactory implements AbstractFactoryInterface
         list($class, $method) = explode('::', $string, 2);
 
         if ($controllers->has($class)) {
-            return array($controllers->get($class), $method);
+            return [$controllers->get($class), $method];
         }
 
         if ($services->has($class)) {
-            return array($services->get($class), $method);
+            return [$services->get($class), $method];
         }
 
         if (! class_exists($class)) {
@@ -103,6 +103,6 @@ class RpcControllerFactory implements AbstractFactoryInterface
             ));
         }
 
-        return array(new $class(), $method);
+        return [new $class(), $method];
     }
 }

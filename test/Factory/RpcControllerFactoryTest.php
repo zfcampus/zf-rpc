@@ -27,13 +27,13 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testWillPullNonCallableStaticCallableFromControllerManagerIfServiceIsPresent()
     {
-        $config = array(
-            'zf-rpc' => array(
-                'Controller\Foo' => array(
+        $config = [
+            'zf-rpc' => [
+                'Controller\Foo' => [
                     'callable' => 'Foo::bar',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $this->services->has('Config')->willReturn(true);
         $this->services->get('Config')->willReturn($config);
 
@@ -55,7 +55,7 @@ class RpcControllerFactoryTest extends TestCase
         );
 
         $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
-        $this->assertAttributeSame(array($foo->reveal(), 'bar'), 'wrappedCallable', $controller);
+        $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
     /**
@@ -63,13 +63,13 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testWillPullNonCallableStaticCallableFromServiceManagerIfServiceIsPresent()
     {
-        $config = array(
-            'zf-rpc' => array(
-                'Controller\Foo' => array(
+        $config = [
+            'zf-rpc' => [
+                'Controller\Foo' => [
                     'callable' => 'Foo::bar',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $this->services->has('Config')->willReturn(true);
         $this->services->get('Config')->willReturn($config);
 
@@ -93,7 +93,7 @@ class RpcControllerFactoryTest extends TestCase
         );
 
         $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
-        $this->assertAttributeSame(array($foo->reveal(), 'bar'), 'wrappedCallable', $controller);
+        $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
     /**
@@ -101,13 +101,13 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testWillInstantiateCallableClassIfClassExists()
     {
-        $config = array(
-            'zf-rpc' => array(
-                'Controller\Foo' => array(
+        $config = [
+            'zf-rpc' => [
+                'Controller\Foo' => [
                     'callable' => 'ZFTest\Rpc\Factory\TestAsset\Foo::bar',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $this->services->has('Config')->willReturn(true);
         $this->services->get('Config')->willReturn($config);
 
@@ -150,7 +150,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigIsMissing()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(array());
+        $this->services->get('Config')->willReturn([]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -161,7 +161,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(array('zf-rpc' => array()));
+        $this->services->get('Config')->willReturn(['zf-rpc' => []]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -172,9 +172,9 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(array('zf-rpc' => array(
+        $this->services->get('Config')->willReturn(['zf-rpc' => [
             'Controller\Foo' => true,
-        )));
+        ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -185,9 +185,9 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(array('zf-rpc' => array(
-            'Controller\Foo' => array(),
-        )));
+        $this->services->get('Config')->willReturn(['zf-rpc' => [
+            'Controller\Foo' => [],
+        ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -197,15 +197,15 @@ class RpcControllerFactoryTest extends TestCase
 
     public function invalidCallables()
     {
-        return array(
-            'null'       => array(null),
-            'zero'       => array(0),
-            'int'        => array(1),
-            'zero-float' => array(0.0),
-            'float'      => array(1.1),
-            'array'      => array(array(true, false)),
-            'object'     => array((object) array()),
-        );
+        return [
+            'null'       => [null],
+            'zero'       => [0],
+            'int'        => [1],
+            'zero-float' => [0.0],
+            'float'      => [1.1],
+            'array'      => [[true, false]],
+            'object'     => [(object) []],
+        ];
     }
 
     /**
@@ -213,11 +213,11 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationFailsForInvalidCallable($callable)
     {
-        $this->services->get('Config')->willReturn(array('zf-rpc' => array(
-            'Controller\Foo' => array(
+        $this->services->get('Config')->willReturn(['zf-rpc' => [
+            'Controller\Foo' => [
                 'callable' => $callable,
-            ),
-        )));
+            ],
+        ]]);
         $this->setExpectedException('InvalidArgumentException', 'Unable to create');
         $this->factory->createServiceWithName(
             $this->controllers->reveal(),
@@ -228,14 +228,14 @@ class RpcControllerFactoryTest extends TestCase
 
     public function validCallbacks()
     {
-        return array(
-            'function'        => array('is_array'),
-            'closure'         => array(function () {
-            }),
-            'invokable'       => array(new TestAsset\Invokable()),
-            'instance-method' => array(array(new TestAsset\Foo(), 'bar')),
-            'static-method'   => array(array(__NAMESPACE__ . '\TestAsset\Foo', 'baz')),
-        );
+        return [
+            'function'        => ['is_array'],
+            'closure'         => [function () {
+            }],
+            'invokable'       => [new TestAsset\Invokable()],
+            'instance-method' => [[new TestAsset\Foo(), 'bar']],
+            'static-method'   => [[__NAMESPACE__ . '\TestAsset\Foo', 'baz']],
+        ];
     }
 
     /**
@@ -243,11 +243,11 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
     {
-        $this->services->get('Config')->willReturn(array('zf-rpc' => array(
-            'Controller\Foo' => array(
+        $this->services->get('Config')->willReturn(['zf-rpc' => [
+            'Controller\Foo' => [
                 'callable' => $callable,
-            ),
-        )));
+            ],
+        ]]);
         $controller = $this->factory->createServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',

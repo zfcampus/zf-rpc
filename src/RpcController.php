@@ -47,7 +47,7 @@ class RpcController extends BaseAbstractActionController
             if (!method_exists($callable, $method)) {
                 $method = 'notFoundAction';
             }
-            $callable = array($callable, $method);
+            $callable = [$callable, $method];
         } else {
             throw new \Exception('RPC Controller Not Understood');
         }
@@ -55,7 +55,7 @@ class RpcController extends BaseAbstractActionController
         $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters);
         $result = call_user_func_array($callable, $dispatchParameters);
 
-        $e->setParam('ZFContentNegotiationFallback', array('Zend\View\Model\JsonModel' => array('application/json')));
+        $e->setParam('ZFContentNegotiationFallback', ['Zend\View\Model\JsonModel' => ['application/json']]);
         $e->setResult($result);
     }
 
@@ -67,7 +67,7 @@ class RpcController extends BaseAbstractActionController
      */
     public static function getMethodFromAction($action)
     {
-        $method  = str_replace(array('.', '-', '_'), ' ', $action);
+        $method  = str_replace(['.', '-', '_'], ' ', $action);
         $method  = ucwords($method);
         $method  = str_replace(' ', '', $method);
         $method  = lcfirst($method);
