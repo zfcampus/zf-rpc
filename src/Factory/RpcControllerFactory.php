@@ -16,7 +16,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ServiceLocatorInterface $controllerManager
      * @param $name
      * @param $requestedName
      * @return bool
