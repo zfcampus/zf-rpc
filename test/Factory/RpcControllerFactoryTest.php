@@ -1,24 +1,32 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZFTest\Rpc\Factory;
 
+use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionProperty;
+use Zend\Mvc\Controller\ControllerManager;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\Factory\RpcControllerFactory;
 
 class RpcControllerFactoryTest extends TestCase
 {
     public function setUp()
     {
-        $this->services = $services = $this->prophesize('Zend\ServiceManager\ServiceLocatorInterface');
-        $this->controllers = $this->prophesize('Zend\Mvc\Controller\ControllerManager');
-        $this->controllers->getServiceLocator()->will(function () use ($services) {
-            return $services->reveal();
-        });
+        $this->services = $services = $this->prophesize(ServiceLocatorInterface::class);
+        $services->willImplement(ContainerInterface::class);
+
+        $this->controllers = $this->prophesize(ControllerManager::class);
+        $this->controllers->getServiceLocator()->willReturn($services->reveal());
+
+        $services->has('ControllerManager')->willReturn(true);
+        $services->get('ControllerManager')->willReturn($this->controllers->reveal());
+
         $this->factory  = new RpcControllerFactory();
     }
 
@@ -34,8 +42,8 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn($config);
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn($config);
 
         $foo = $this->prophesize('stdClass');
         $this->controllers->has('Foo')->willReturn(true);
@@ -70,8 +78,8 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn($config);
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn($config);
 
         $foo = $this->prophesize('stdClass');
         $this->services->has('Foo')->willReturn(true);
@@ -108,8 +116,8 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn($config);
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn($config);
 
         $this->controllers->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
         $this->services->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
@@ -139,7 +147,7 @@ class RpcControllerFactoryTest extends TestCase
 
     public function testReportsCannotCreateServiceIfConfigIsMissing()
     {
-        $this->services->has('Config')->willReturn(false);
+        $this->services->has('config')->willReturn(false);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -149,8 +157,8 @@ class RpcControllerFactoryTest extends TestCase
 
     public function testReportsCannotCreateServiceIfRpcConfigIsMissing()
     {
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn([]);
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn([]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -160,8 +168,8 @@ class RpcControllerFactoryTest extends TestCase
 
     public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName()
     {
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => []]);
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn(['zf-rpc' => []]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -171,8 +179,8 @@ class RpcControllerFactoryTest extends TestCase
 
     public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray()
     {
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn(['zf-rpc' => [
             'Controller\Foo' => true,
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -184,8 +192,8 @@ class RpcControllerFactoryTest extends TestCase
 
     public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey()
     {
-        $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn(['zf-rpc' => [
             'Controller\Foo' => [],
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -213,12 +221,12 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationFailsForInvalidCallable($callable)
     {
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['zf-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
         ]]);
-        $this->setExpectedException('InvalidArgumentException', 'Unable to create');
+        $this->setExpectedException(ServiceNotCreatedException::class, 'Unable to create');
         $this->factory->createServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -243,7 +251,7 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
     {
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['zf-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
