@@ -6,7 +6,19 @@
 
 namespace ZF\Rpc;
 
+use Closure;
+use Exception;
+use ReflectionFunction;
+use ReflectionObejct;
+use Zend\Http\PhpEnvironment\Request as PhpEnvironmentRequest;
+use Zend\Http\PhpEnvironment\Response as PhpEnvironmentResponse;
+use Zend\Http\Request;
+use Zend\Http\Response;
+use Zend\Mvc\Application;
+use Zend\Mvc\ApplicationInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\Stdlib\RequestInterface;
+use Zend\Stdlib\ResponseInterface;
 
 class ParameterMatcher
 {
@@ -19,16 +31,16 @@ class ParameterMatcher
 
     public function getMatchedParameters($callable, $parameters)
     {
-        if (is_string($callable) || $callable instanceof \Closure) {
-            $reflection = new \ReflectionFunction($callable);
+        if (is_string($callable) || $callable instanceof Closure) {
+            $reflection = new ReflectionFunction($callable);
             $reflMethodParams = $reflection->getParameters();
         } elseif (is_array($callable) && count($callable) == 2) {
             $object = $callable[0];
             $method = $callable[1];
-            $reflection = new \ReflectionObject($object);
+            $reflection = new ReflectionObject($object);
             $reflMethodParams = $reflection->getMethod($method)->getParameters();
         } else {
-            throw new \Exception('Unknown callable');
+            throw new Exception('Unknown callable');
         }
 
         $dispatchParams = [];
@@ -44,33 +56,47 @@ class ParameterMatcher
             $normalMethodParamName = str_replace(['-', '_'], '', strtolower($paramName));
             if ($reflectionTypehint = $reflMethodParam->getClass()) {
                 $typehint = $reflectionTypehint->getName();
-                if ($typehint == 'Zend\Http\PhpEnvironment\Request'
-                    || $typehint == 'Zend\Http\Request'
-                    || $typehint == 'Zend\Stdlib\RequestInterface'
-                    || $this->isSubclassOf($typehint, 'Zend\Stdlib\RequestInterface')) {
+
+                if ($typehint == PhpEnvironmentRequest::class
+                    || $typehint == Request::class
+                    || $typehint == RequestInterface::class
+                    || is_subclass_of($typehint, RequestInterface::class)
+                ) {
                     $dispatchParams[] = $this->mvcEvent->getRequest();
                     continue;
                 }
-                if ($typehint == 'Zend\Http\PhpEnvironment\Response'
-                    || $typehint == 'Zend\Http\Response'
-                    || $typehint == 'Zend\Stdlib\ResponseInterface'
-                    || $this->isSubclassOf($typehint, 'Zend\Stdlib\ResponseInterface')) {
+
+                if ($typehint == PhpEnvironmentResponse::class
+                    || $typehint == Response::class
+                    || $typehint == ResponseInterface::class
+                    || is_subclass_of($typehint, ResponseInterface::class)
+                ) {
                     $dispatchParams[] = $this->mvcEvent->getResponse();
                     continue;
                 }
-                if ($typehint == 'Zend\Mvc\ApplicationInterface'
-                    || $typehint == 'Zend\Mvc\Application'
-                    || $this->isSubclassOf($typehint, 'Zend\Mvc\ApplicationInterface')) {
+
+                if ($typehint == ApplicationInterface::class
+                    || $typehint == Application::class
+                    || is_subclass_of($typehint, ApplicationInterface::class)
+                ) {
                     $dispatchParams[] = $this->mvcEvent->getApplication();
                     continue;
                 }
-                if ($typehint == 'Zend\Mvc\MvcEvent'
-                    || $this->isSubclassOf($typehint, 'Zend\Mvc\MvcEvent')) {
+
+                if ($typehint == MvcEvent::class
+                    || is_subclass_of($typehint, MvcEvent::class)
+                ) {
                     $dispatchParams[] = $this->mvcEvent;
                     continue;
                 }
-                throw new \Exception($typehint . ' was requested that could not be auto-bound.');
-            } elseif (isset($normalParams[$normalMethodParamName])) {
+
+                throw new Exception(sprintf(
+                    '%s was requested, but could not be auto-bound',
+                    $typehint
+                ));
+            }
+
+            if (isset($normalParams[$normalMethodParamName])) {
                 $dispatchParams[] = $normalParams[$normalMethodParamName];
             } else {
                 if ($reflMethodParam->isOptional()) {
@@ -82,21 +108,5 @@ class ParameterMatcher
         }
 
         return $dispatchParams;
-    }
-
-
-    protected static function isSubclassOf($className, $type)
-    {
-        if (is_subclass_of($className, $type)) {
-            return true;
-        }
-        if (version_compare(PHP_VERSION, '5.3.7', '>=')) {
-            return false;
-        }
-        if (!interface_exists($type)) {
-            return false;
-        }
-        $r = new \ReflectionClass($className);
-        return $r->implementsInterface($type);
     }
 }

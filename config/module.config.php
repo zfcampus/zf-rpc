@@ -4,8 +4,10 @@
  * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
-return array(
-    'zf-rpc' => array(
+namespace ZF\Rpc;
+
+return [
+    'zf-rpc' => [
         // Array of Controller service name / configuration
         //
         // Configuration should include:
@@ -19,15 +21,20 @@ return array(
         //
         // Example:
         //
-        //   'Api\LoginController' => array(
-        //       'http_methods' => array('POST'),
+        //   'Api\LoginController' => [
+        //       'http_methods' => ['POST'],
         //       'route_name'   => 'api-login',
         //       'callable'     => 'Api\Controller\Login::process',
-        //   ),
-    ),
-    'controllers' => array(
-        'abstract_factories' => array(
-            'ZF\Rpc\Factory\RpcControllerFactory',
-        ),
-    ),
-);
+        //   ],
+    ],
+    'controllers' => [
+        'abstract_factories' => [
+            Factory\RpcControllerFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            OptionsListener::class => Factory\OptionsListenerFactory::class,
+        ],
+    ],
+];
