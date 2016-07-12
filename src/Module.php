@@ -18,6 +18,14 @@ class Module
         return include __DIR__ . '/../config/module.config.php';
     }
 
+    /**
+     * Listen to bootstrap event.
+     *
+     * Attaches the OptionsListener and the JSON view strategy.
+     *
+     * @param \Zend\Mvc\MvcEvent $e
+     * @return void
+     */
     public function onBootstrap($e)
     {
         $app      = $e->getApplication();

@@ -51,7 +51,7 @@ class OptionsListener implements ListenerAggregateInterface
         }
 
         $controller = $matches->getParam('controller', false);
-        if (!$controller) {
+        if (! $controller) {
             // No controller in the matches, nothing to do
             return;
         }
