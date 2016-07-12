@@ -1,19 +1,22 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2014-2016 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZF\Rpc;
 
-use Zend\EventManager\AbstractListenerAggregate;
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
 
-class OptionsListener extends AbstractListenerAggregate
+class OptionsListener implements ListenerAggregateInterface
 {
+    use ListenerAggregateTrait;
+
     /**
      * @var array
      */
@@ -28,9 +31,9 @@ class OptionsListener extends AbstractListenerAggregate
     }
 
     /**
-     * @param  EventManagerInterface $events
+     * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -100);
     }
@@ -42,25 +45,25 @@ class OptionsListener extends AbstractListenerAggregate
     public function onRoute(MvcEvent $event)
     {
         $matches = $event->getRouteMatch();
-        if (!$matches) {
+        if (! $matches) {
             // No matches, nothing to do
             return;
         }
 
         $controller = $matches->getParam('controller', false);
-        if (!$controller) {
+        if (! $controller) {
             // No controller in the matches, nothing to do
             return;
         }
 
-        if (!array_key_exists($controller, $this->config)) {
+        if (! array_key_exists($controller, $this->config)) {
             // No matching controller in our configuration, nothing to do
             return;
         }
 
         $config = $this->config[$controller];
 
-        if (!array_key_exists('http_methods', $config)
+        if (! array_key_exists('http_methods', $config)
             || empty($config['http_methods'])
         ) {
             // No HTTP methods set for controller, nothing to do
@@ -68,7 +71,7 @@ class OptionsListener extends AbstractListenerAggregate
         }
 
         $request = $event->getRequest();
-        if (!$request instanceof Request) {
+        if (! $request instanceof Request) {
             // Not an HTTP request? nothing to do
             return;
         }

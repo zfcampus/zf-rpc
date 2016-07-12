@@ -6,13 +6,13 @@
 
 namespace ZF\Rpc;
 
+use Closure;
 use Zend\Mvc\Controller\AbstractActionController as BaseAbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model;
 
 class RpcController extends BaseAbstractActionController
 {
-
     protected $wrappedCallable;
 
     public function setWrappedCallable($wrappedCallable)
@@ -34,17 +34,17 @@ class RpcController extends BaseAbstractActionController
         $parameterMatcher = new ParameterMatcher($e);
 
         // match route params to dispatchable parameters
-        if ($this->wrappedCallable instanceof \Closure) {
+        if ($this->wrappedCallable instanceof Closure) {
             $callable = $this->wrappedCallable;
         } elseif (is_array($this->wrappedCallable) && is_callable($this->wrappedCallable)) {
             $callable = $this->wrappedCallable;
         } elseif (is_object($this->wrappedCallable) || is_null($this->wrappedCallable)) {
             $action = $routeMatch->getParam('action', 'not-found');
             $method = static::getMethodFromAction($action);
-            $callable = (is_null($this->wrappedCallable) && get_class($this) != __CLASS__)
+            $callable = (is_null($this->wrappedCallable) && get_class($this) !== __CLASS__)
                 ? $this
                 : $this->wrappedCallable;
-            if (!method_exists($callable, $method)) {
+            if (! method_exists($callable, $method)) {
                 $method = 'notFoundAction';
             }
             $callable = [$callable, $method];

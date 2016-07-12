@@ -6,7 +6,7 @@ ZF RPC
 Introduction
 ------------
 
-Module for implementing RPC web services in ZF2.
+Module for implementing RPC web services in Zend Framework.
 
 Enables:
 
@@ -25,14 +25,14 @@ Installation
 Run the following `composer` command:
 
 ```console
-$ composer require "zfcampus/zf-rpc:~1.0-dev"
+$ composer require zfcampus/zf-rpc
 ```
 
 Alternately, manually add the following to your `composer.json`, in the `require` section:
 
 ```javascript
 "require": {
-    "zfcampus/zf-rpc": "~1.0-dev"
+    "zfcampus/zf-rpc": "^1.3"
 }
 ```
 
@@ -42,15 +42,20 @@ Finally, add the module name to your project's `config/application.config.php` u
 key:
 
 ```php
-return array(
+return [
     /* ... */
-    'modules' => array(
+    'modules' => [
         /* ... */
         'ZF\Rpc',
-    ),
+    ],
     /* ... */
-);
+];
 ```
+
+> ### zf-component-installer
+>
+> If you use [zf-component-installer](https://github.com/zendframework/zf-component-installer),
+> that plugin will install zf-rpc as a module for you.
 
 Configuration
 =============
@@ -79,13 +84,13 @@ Inside this key, the following sub-keys are required:
 Example:
 
 ```php
-'zf-rpc' => array(
-    'Application\Controller\LoginController' => array(
-        'http_methods' => array('POST'),
+'zf-rpc' => [
+    'Application\Controller\LoginController' => [
+        'http_methods' => ['POST'],
         'route_name'   => 'api-login',
         'callable'     => 'Application\Controller\LoginController::process',
-    ),
-),
+    ],
+],
 ```
 
 ### System Configuration
@@ -94,11 +99,11 @@ The following configuration ensures this module operates properly in the context
 application:
 
 ```php
-'controllers' => array(
-    'abstract_factories' => array(
+'controllers' => [
+    'abstract_factories' => [
         'ZF\Rpc\Factory\RpcControllerFactory',
-    ),
-),
+    ],
+],
 ```
 
 ZF2 Events
