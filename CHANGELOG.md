@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.3.1 - TBD
+## 1.3.1 - 2016-10-11
 
 ### Added
 
@@ -18,7 +18,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#11](https://github.com/zfcampus/zf-rpc/pull/11) fixes a typo in an import
+  statement.
 
 ## 1.3.0 - 2016-07-12
 
