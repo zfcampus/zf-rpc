@@ -9,7 +9,7 @@ namespace ZF\Rpc;
 use Closure;
 use Exception;
 use ReflectionFunction;
-use ReflectionObejct;
+use ReflectionObject;
 use Zend\Http\PhpEnvironment\Request as PhpEnvironmentRequest;
 use Zend\Http\PhpEnvironment\Response as PhpEnvironmentResponse;
 use Zend\Http\Request;
