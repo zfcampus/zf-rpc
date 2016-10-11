@@ -38,6 +38,6 @@ class Module
         // Setup json strategy
         $strategy = $services->get('ViewJsonStrategy');
         $view     = $services->get('ViewManager')->getView();
-        $strategy->attach($view->getEventManager());
+        $strategy->attach($view->getEventManager(), 100);
     }
 }

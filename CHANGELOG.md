@@ -38,6 +38,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#11](https://github.com/zfcampus/zf-rpc/pull/11) fixes a typo in an import
   statement.
+- [#12](https://github.com/zfcampus/zf-rpc/pull/12) fixes registration of the
+  `ViewJsonFactory`, ensuring it registers at its original priority of 100.
 
 ## 1.3.0 - 2016-07-12
 
