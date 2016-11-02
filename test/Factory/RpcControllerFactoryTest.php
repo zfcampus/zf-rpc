@@ -8,14 +8,31 @@ namespace ZFTest\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\Factory\RpcControllerFactory;
+use ZF\Rpc\RpcController;
 
 class RpcControllerFactoryTest extends TestCase
 {
+    /**
+     * @var ServiceLocatorInterface|ProphecyInterface
+     */
+    private $services;
+
+    /**
+     * @var ControllerManager|ProphecyInterface
+     */
+    private $controllers;
+
+    /**
+     * @var RpcControllerFactory
+     */
+    private $factory;
+
     public function setUp()
     {
         $this->services = $services = $this->prophesize(ServiceLocatorInterface::class);
@@ -27,7 +44,7 @@ class RpcControllerFactoryTest extends TestCase
         $services->has('ControllerManager')->willReturn(true);
         $services->get('ControllerManager')->willReturn($this->controllers->reveal());
 
-        $this->factory  = new RpcControllerFactory();
+        $this->factory = new RpcControllerFactory();
     }
 
     /**
@@ -62,7 +79,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf(RpcController::class, $controller);
         $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
@@ -100,7 +117,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf(RpcController::class, $controller);
         $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
@@ -112,15 +129,15 @@ class RpcControllerFactoryTest extends TestCase
         $config = [
             'zf-rpc' => [
                 'Controller\Foo' => [
-                    'callable' => 'ZFTest\Rpc\Factory\TestAsset\Foo::bar',
+                    'callable' => TestAsset\Foo::class . '::bar',
                 ],
             ],
         ];
         $this->services->has('config')->willReturn(true);
         $this->services->get('config')->willReturn($config);
 
-        $this->controllers->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
-        $this->services->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
+        $this->controllers->has(TestAsset\Foo::class)->willReturn(false);
+        $this->services->has(TestAsset\Foo::class)->willReturn(false);
 
         $controllers = $this->controllers->reveal();
 
@@ -135,13 +152,13 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf(RpcController::class, $controller);
 
         $r = new ReflectionProperty($controller, 'wrappedCallable');
         $r->setAccessible(true);
         $callable = $r->getValue($controller);
         $this->assertInternalType('array', $callable);
-        $this->assertInstanceOf(__NAMESPACE__ . '\TestAsset\Foo', $callable[0]);
+        $this->assertInstanceOf(TestAsset\Foo::class, $callable[0]);
         $this->assertEquals('bar', $callable[1]);
     }
 
@@ -218,6 +235,8 @@ class RpcControllerFactoryTest extends TestCase
 
     /**
      * @dataProvider invalidCallables
+     *
+     * @param mixed $callable
      */
     public function testServiceCreationFailsForInvalidCallable($callable)
     {
@@ -226,7 +245,8 @@ class RpcControllerFactoryTest extends TestCase
                 'callable' => $callable,
             ],
         ]]);
-        $this->setExpectedException(ServiceNotCreatedException::class, 'Unable to create');
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->expectExceptionMessage('Unable to create');
         $this->factory->createServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -242,12 +262,14 @@ class RpcControllerFactoryTest extends TestCase
             }],
             'invokable'       => [new TestAsset\Invokable()],
             'instance-method' => [[new TestAsset\Foo(), 'bar']],
-            'static-method'   => [[__NAMESPACE__ . '\TestAsset\Foo', 'baz']],
+            'static-method'   => [[TestAsset\Foo::class, 'baz']],
         ];
     }
 
     /**
      * @dataProvider validCallbacks
+     *
+     * @param callable $callable
      */
     public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
     {
@@ -262,7 +284,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf(RpcController::class, $controller);
         $this->assertAttributeSame($callable, 'wrappedCallable', $controller);
     }
 }
