@@ -1,7 +1,7 @@
 ZF RPC
 ======
 
-[![Build Status](https://travis-ci.org/zfcampus/zf-rpc.png)](https://travis-ci.org/zfcampus/zf-rpc)
+[![Build Status](https://travis-ci.org/zfcampus/zf-rpc.svg)](https://travis-ci.org/zfcampus/zf-rpc)
 [![Coverage Status](https://coveralls.io/repos/github/zfcampus/zf-rpc/badge.svg)](https://coveralls.io/github/zfcampus/zf-rpc)
 
 Introduction
