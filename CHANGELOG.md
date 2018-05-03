@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.4.0 - TBD
+## 1.4.0 - 2018-05-03
 
 ### Added
+
+- [#17](https://github.com/zfcampus/zf-rpc/pull/17) adds support for PHP 7.1 and 7.2.
+
+### Changed
 
 - Nothing.
 
@@ -14,25 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.3.2 - TBD
-
-### Added
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
+- [#17](https://github.com/zfcampus/zf-rpc/pull/17) removes support for HHVM.
 
 ### Fixed
 
