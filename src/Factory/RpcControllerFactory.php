@@ -15,6 +15,15 @@ use ZF\Rpc\RpcController;
 class RpcControllerFactory implements AbstractFactoryInterface
 {
     /**
+     * Marker used to ensure we do not end up in a circular dependency lookup
+     * loop.
+     *
+     * @see https://github.com/zfcampus/zf-rpc/issues/18
+     * @var null|string
+     */
+    private $lastRequestedControllerService;
+
+    /**
      * Determine if we can create a service with name
      *
      * @param ContainerInterface $container
@@ -118,9 +127,14 @@ class RpcControllerFactory implements AbstractFactoryInterface
         $callable = false;
         list($class, $method) = explode('::', $string, 2);
 
-        if ($container->has('ControllerManager')) {
+        if ($container->has('ControllerManager')
+            && $this->lastRequestedControllerService !== $class
+        ) {
+            $this->lastRequestedControllerService = $class;
             $callable = $this->marshalCallableFromContainer($class, $method, $container->get('ControllerManager'));
         }
+
+        $this->lastRequestedControllerService = null;
 
         if (! $callable) {
             $callable = $this->marshalCallableFromContainer($class, $method, $container);
