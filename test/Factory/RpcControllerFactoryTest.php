@@ -10,7 +10,9 @@ use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\Factory\RpcControllerFactory;
@@ -286,5 +288,43 @@ class RpcControllerFactoryTest extends TestCase
 
         $this->assertInstanceOf(RpcController::class, $controller);
         $this->assertAttributeSame($callable, 'wrappedCallable', $controller);
+    }
+
+    /**
+     * @group 7
+     * @see https://github.com/zfcampus/zf-rpc/issues/18
+     */
+    public function testFactoryDoesNotEnterACircularDependencyLookupCondition()
+    {
+        $config = [
+            'controllers' => [
+                'abstract_factories' => [
+                    RpcControllerFactory::class,
+                ],
+            ],
+            'zf-rpc' => [
+                TestAsset\Foo::class => [
+                    'callable' => TestAsset\Foo::class . '::bar',
+                ],
+            ],
+        ];
+
+        $this->services->has('config')->willReturn(true);
+        $this->services->get('config')->willReturn($config);
+
+        $this->services->has(TestAsset\Foo::class)->willReturn(false);
+
+        $this->services->get('EventManager')->willReturn($this->prophesize(EventManagerInterface::class)->reveal());
+        $this->services->get('ControllerPluginManager')->willReturn($this->prophesize(PluginManager::class)->reveal());
+
+        $controllerManager = new ControllerManager($this->services->reveal(), $config['controllers']);
+
+        $this->services->has('ControllerManager')->willReturn(true);
+        $this->services->get('ControllerManager')->willReturn($controllerManager);
+
+        $this->assertTrue($controllerManager->has(TestAsset\Foo::class));
+
+        $controller = $controllerManager->get(TestAsset\Foo::class);
+        $this->assertInstanceOf(RpcController::class, $controller);
     }
 }
