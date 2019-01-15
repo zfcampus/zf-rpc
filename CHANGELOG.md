@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.4.1 - TBD
+## 1.4.2 - TBD
 
 ### Added
 
@@ -23,6 +23,28 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - Nothing.
+
+## 1.4.1 - 2019-01-07
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#19](https://github.com/zfcampus/zf-rpc/pull/19) fixes a circular dependency issue in the `RpcControllerFactory`.
 
 ## 1.4.0 - 2018-05-03
 
