@@ -7,12 +7,15 @@
 namespace ZFTest\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Controller\PluginManager;
+use Zend\Mvc\MvcEvent;
+use Zend\Router\RouteMatch;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\Factory\RpcControllerFactory;
@@ -326,5 +329,25 @@ class RpcControllerFactoryTest extends TestCase
 
         $controller = $controllerManager->get(TestAsset\Foo::class);
         $this->assertInstanceOf(RpcController::class, $controller);
+
+        $wrappedCallable = Assert::readAttribute($controller, 'wrappedCallable');
+
+        // Test fails here, we get an instance of ZF\Rpc\RpcController instead of TestAsset\Foo
+        $this->assertInstanceOf(TestAsset\Foo::class, $wrappedCallable[0]);
+        $this->assertEquals('bar', $wrappedCallable[1]);
+
+        // All lines below only for demonstration purposes, can be removed after issue has been resolved:
+
+        $event = $this->prophesize(MvcEvent::class);
+        $routeMatch = $this->prophesize(RouteMatch::class);
+        $event->getParam('ZFContentNegotiationParameterData')->shouldBeCalled()->willReturn(false);
+        $event->getRouteMatch()->shouldBeCalled()->willReturn($routeMatch->reveal());
+
+        // We get here an unexpected Method bar does not exist exception because the wrappedCallable is holding
+        // an instance of ZF\Rpc\RpcController instead of an instance of TestAsset\Foo
+        $this->expectException(\ReflectionException::class);
+        $this->expectExceptionMessage('Method bar does not exist');
+
+        $controller->onDispatch($event->reveal());
     }
 }
