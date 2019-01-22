@@ -8,11 +8,15 @@ namespace ZFTest\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Controller\PluginManager;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch as LegacyRouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\Rpc\Factory\RpcControllerFactory;
@@ -326,5 +330,38 @@ class RpcControllerFactoryTest extends TestCase
 
         $controller = $controllerManager->get(TestAsset\Foo::class);
         $this->assertInstanceOf(RpcController::class, $controller);
+
+        $wrappedCallable = $this->readAttribute($controller, 'wrappedCallable');
+
+        $this->assertInstanceOf(TestAsset\Foo::class, $wrappedCallable[0]);
+        $this->assertEquals('bar', $wrappedCallable[1]);
+
+        // The lines below verify that the callable is correctly called when decorated in an RpcController
+        $event = $this->prophesize(MvcEvent::class);
+        $routeMatch = $this->prophesize($this->getRouteMatchClass());
+        $event->getParam('ZFContentNegotiationParameterData')->shouldBeCalled()->willReturn(false);
+        $event->getRouteMatch()->shouldBeCalled()->willReturn($routeMatch->reveal());
+        $event->setParam('ZFContentNegotiationFallback', Argument::type('array'))->shouldBeCalled();
+        $event->setResult(null)->shouldBeCalled();
+
+        $controller->onDispatch($event->reveal());
+    }
+
+    /**
+     * Retrieve the currently expected RouteMatch class.
+     *
+     * Essentially, these vary between versions 2 and 3 of zend-mvc, with the
+     * latter using the class provided in zend-router.
+     *
+     * We can remove this once we drop support for ZF2.
+     *
+     * @return string
+     */
+    private function getRouteMatchClass()
+    {
+        if (class_exists(RouteMatch::class)) {
+            return RouteMatch::class;
+        }
+        return LegacyRouteMatch::class;
     }
 }

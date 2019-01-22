@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.4.2 - TBD
+## 1.4.2 - 2019-01-22
 
 ### Added
 
@@ -44,7 +44,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#20](https://github.com/zfcampus/zf-rpc/pull/20) fixes a circular dependency lookup issue that would result in nested
+  wrapping of a callable for use as an RPC controller.
 
 ## 1.4.1 - 2019-01-07
 
