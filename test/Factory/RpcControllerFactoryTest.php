@@ -7,7 +7,6 @@
 namespace ZFTest\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
@@ -332,7 +331,7 @@ class RpcControllerFactoryTest extends TestCase
         $controller = $controllerManager->get(TestAsset\Foo::class);
         $this->assertInstanceOf(RpcController::class, $controller);
 
-        $wrappedCallable = Assert::readAttribute($controller, 'wrappedCallable');
+        $wrappedCallable = $this->readAttribute($controller, 'wrappedCallable');
 
         $this->assertInstanceOf(TestAsset\Foo::class, $wrappedCallable[0]);
         $this->assertEquals('bar', $wrappedCallable[1]);
