@@ -52,7 +52,7 @@ class RpcController extends BaseAbstractActionController
             throw new \Exception('RPC Controller Not Understood');
         }
 
-        $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters);
+        $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters ?: []);
         $result = call_user_func_array($callable, $dispatchParameters);
 
         $e->setParam('ZFContentNegotiationFallback', ['Zend\View\Model\JsonModel' => ['application/json']]);

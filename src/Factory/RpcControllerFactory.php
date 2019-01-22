@@ -32,6 +32,11 @@ class RpcControllerFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
+        // Prevent circular lookup
+        if ($requestedName === $this->lastRequestedControllerService) {
+            return false;
+        }
+
         if (! $container->has('config')) {
             return false;
         }
@@ -43,9 +48,7 @@ class RpcControllerFactory implements AbstractFactoryInterface
 
         $config = $config['zf-rpc'][$requestedName];
 
-        if (! is_array($config)
-            || ! isset($config['callable'])
-        ) {
+        if (! isset($config['callable'])) {
             return false;
         }
 
