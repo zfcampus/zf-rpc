@@ -1,6 +1,10 @@
 ZF RPC
 ======
 
+> ## Repository abandoned 2019-12-31
+>
+> This repository has moved to laminas-api-tools/api-tools-rpc.
+
 [![Build Status](https://secure.travis-ci.org/zfcampus/zf-rpc.svg?branch=master)](https://secure.travis-ci.org/zfcampus/zf-rpc)
 [![Coverage Status](https://coveralls.io/repos/github/zfcampus/zf-rpc/badge.svg?branch=master)](https://coveralls.io/github/zfcampus/zf-rpc?branch=master)
 
